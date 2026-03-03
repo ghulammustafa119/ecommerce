@@ -21,31 +21,31 @@ export async function GET(req: NextRequest) {
     });
   }
 
+  // Sanitize query to prevent GROQ injection
+  const sanitizedQuery = query.replace(/["\\]/g, "");
+
   let groqQuery = "";
-  if (categories.includes(query)) {
-    // Category match: only show products of that category
-    groqQuery = `*[_type == "product" && category == "${query}"] {
-      _id,
-      name,
-      price,
-      description,
-      "image": image.asset->url,
-      discountPercent
-    }`;
+  const projection = `{
+    _id,
+    name,
+    price,
+    description,
+    "image": image.asset->url,
+    discountPercent
+  }`;
+
+  if (categories.includes(sanitizedQuery)) {
+    groqQuery = `*[_type == "product" && category == $query] ${projection}`;
   } else {
-    // Name match: match exact word (not as substring)
-    groqQuery = `*[_type == "product" && (name match "* ${query} *" || name match "${query} *" || name match "* ${query}" || name == "${query}")] {
-      _id,
-      name,
-      price,
-      description,
-      "image": image.asset->url,
-      discountPercent
-    }`;
+    groqQuery = `*[_type == "product" && (name match $matchQuery || name == $query)] ${projection}`;
   }
 
   try {
-    const products = await client.fetch(groqQuery);
+    const params: Record<string, string> = {
+      query: sanitizedQuery,
+      matchQuery: `*${sanitizedQuery}*`,
+    };
+    const products = await client.fetch(groqQuery, params);
     return new Response(JSON.stringify(products), {
       status: 200,
       headers: { "Content-Type": "application/json" },

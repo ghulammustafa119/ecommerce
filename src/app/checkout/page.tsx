@@ -22,9 +22,10 @@ import {
 import { Input } from "@/components/ui/input";
 import { client } from "@/sanity/lib/client";
 import { Bounce, toast, ToastContainer } from "react-toastify";
-import { BreadcrumbCollapsed } from "@/components/Breadcrupm";
-import { removeOrderFromLocalStorage } from "../Redux/features/cart";
+import { BreadcrumbCollapsed } from "@/components/Breadcrumb";
+import { clearCart } from "../Redux/features/cart";
 import { useRouter } from "next/navigation";
+import { CartItem } from "@/type";
 // Form schema with validations
 const formSchema = z.object({
   fullName: z.string().min(1, "Full name is required").max(100, "Name is too long"),
@@ -66,15 +67,6 @@ function Checkout() {
       transition: Bounce,
     });
 
-  // Cart items interface
-  interface CartItem {
-    name: string;
-    price: number;
-    discount: number;
-    qty: number;
-    image: string;
-  }
-
   const cartArray: CartItem[] = useSelector((state: { cart: CartItem[] }) => state.cart);
 
   const total = cartArray.reduce((total: number, arr: CartItem) => {
@@ -105,11 +97,14 @@ function Checkout() {
         phoneNumber: values.phoneNumber,
       });
 
-      const order = await client.create({
+      await client.create({
         _type: "orders",
         shippingForm: { _ref: shippingForm._id },
+        status: "pending",
+        orderDate: new Date().toISOString(),
+        totalAmount: total,
         products: cartArray.map((product) => ({
-          TrackingId: `${values.fullName}-${Math.random()}`, // Ensure unique key for each product
+          TrackingId: `${values.fullName}-${crypto.randomUUID()}`,
           name: product.name,
           price: product.price,
           qty: product.qty,
@@ -119,12 +114,11 @@ function Checkout() {
       // Show success toast
       notifySuccess();
 
-      dispatch(removeOrderFromLocalStorage())
+      dispatch(clearCart())
       // Clear form fields after submission
       form.reset();
       router.push("/payment");
     } catch (error) {
-      console.error("Error submitting form:", error); // Debugging log
       notifyError("Failed to place the order. Please try again.");
     }
   }
@@ -141,7 +135,7 @@ function Checkout() {
       {cartArray.length >= 1 && (
         <div className="w-full lg:w-[600px] space-y-4 border rounded-[20px] pt-2">
           <h1 className="text-2xl font-bold px-5">Order Summary</h1>
-          {cartArray.map((data: any, index: any) => {
+          {cartArray.map((data, index) => {
             return (
               <div className="flex justify-between items-start px-5" key={index}>
                 <div className="flex items-start space-x-2">

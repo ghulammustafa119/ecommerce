@@ -23,8 +23,8 @@ function Search() {
   };
 
   return (
-    <div className="ml-14 flex flex-col items-center justify-center w-full">
-      <form onSubmit={handleSearch} className="flex w-full items-center">
+    <div className="ml-14 flex flex-col items-center justify-center w-full" role="search">
+      <form onSubmit={handleSearch} className="flex w-full items-center" aria-label="Search products">
         <Input
           value={searchQuery}
           onChange={handleInputChange}
@@ -32,9 +32,11 @@ function Search() {
           className="flex justify-start items-center lg:bg-[#F0F0F0] lg:w-[500px] h-[40px] pl-2 ml-12 md:ml-0 hover:border-none rounded-full"
           type="search"
           placeholder="Search products..."
+          aria-label="Search products"
         />
         <button
           type="submit"
+          aria-label="Submit search"
           className="ml-2 px-4 py-2 bg-black text-white rounded-full hover:bg-gray-800"
         >
           Search

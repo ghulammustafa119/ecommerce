@@ -1,3 +1,40 @@
+// Cart item type used across cart, checkout, and product components
+export interface CartItem {
+  id: string;
+  uuid: number;
+  name: string;
+  image: string;
+  price: number;
+  size: string;
+  color: string;
+  qty: number;
+  discount: number;
+}
+
+// Product type from Sanity
+export interface Product {
+  _id: string;
+  name: string;
+  price: number;
+  description: string;
+  image: string;
+  discountPercent: number;
+  isNew: boolean;
+  colors: string[];
+  sizes: string[];
+  category?: string;
+}
+
+// Search result product
+export interface SearchProduct {
+  _id: string;
+  name: string;
+  price: number;
+  description: string;
+  image: string;
+  discountPercent: number;
+}
+
 // Define types for the API response
 export type Address = {
     name: string;

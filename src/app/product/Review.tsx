@@ -60,7 +60,7 @@ export default function ReviewForm() {
         );
         setReviews(fetchedReviews);
       } catch (error) {
-        console.error('Error fetching reviews:', error);
+        // Error fetching reviews
       }
     };
 
@@ -97,7 +97,7 @@ export default function ReviewForm() {
       setReview('');
       setRating(0);
     } catch (error) {
-      console.error('Error submitting review:', error);
+      // Error submitting review
     }
   };
 
@@ -106,7 +106,7 @@ export default function ReviewForm() {
       await client.delete(reviewId);
       setReviews((prevReviews) => prevReviews.filter((rev) => rev._id !== reviewId));
     } catch (error) {
-      console.error('Error deleting review:', error);
+      // Error deleting review
     }
   };
   return (
@@ -166,11 +166,10 @@ export default function ReviewForm() {
                   <div className="flex flex-col  items-start ">
                   <div className="flex">
                       {[...Array(5)].map((_, i) => (
-                       <div  key={i}>
+                       <div key={i}>
                          <FaStar
-                          key={i}
-                          className="text-yellow-400"
-                        /> 
+                          className={i < (rev.rating || 0) ? "text-yellow-400" : "text-gray-300"}
+                        />
                        </div>
                       ))}
                     </div>

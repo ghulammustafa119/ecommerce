@@ -1,14 +1,10 @@
-import {
-    ClerkProvider,
-    SignedIn,
-    SignedOut,
-    UserButton
-} from '@clerk/nextjs'
+import { ClerkProvider } from '@clerk/nextjs'
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import ErrorBoundary from "@/components/ErrorBoundary";
 import Providers from "./providers";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -23,22 +19,19 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  let isStudio = false;
-  if (typeof window !== "undefined") {
-    isStudio = window.location.pathname.startsWith("/studio");
-  }
   return (
     <ClerkProvider>
       <html lang="en">
-        <body>
+        <body className={inter.className}>
           <Providers>
-            {!isStudio && <Header />}
-            {children}
-            <Footer />
+            <ErrorBoundary>
+              <Header />
+              {children}
+              <Footer />
+            </ErrorBoundary>
           </Providers>
         </body>
       </html>
     </ClerkProvider>
   );
 }
-   

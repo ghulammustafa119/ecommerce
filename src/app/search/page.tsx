@@ -4,11 +4,12 @@ import { useSearchParams} from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { SearchProduct } from "@/type";
 
 export default function SearchResultsPage() {
   const searchParams = useSearchParams();
   const query = searchParams.get("query") || "";
-  const [products, setProducts] = useState<any[]>([]);
+  const [products, setProducts] = useState<SearchProduct[]>([]);
   const [loading, setLoading] = useState(false);
   const [notFound, setNotFound] = useState(false);
 

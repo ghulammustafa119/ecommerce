@@ -14,6 +14,34 @@ const orderSchema = {
         Rule.required().error("Shipping form reference is required"),
     },
     {
+      name: "status",
+      title: "Order Status",
+      type: "string",
+      options: {
+        list: [
+          { title: "Pending", value: "pending" },
+          { title: "Processing", value: "processing" },
+          { title: "Shipped", value: "shipped" },
+          { title: "Delivered", value: "delivered" },
+          { title: "Cancelled", value: "cancelled" },
+        ],
+      },
+      initialValue: "pending",
+    },
+    {
+      name: "orderDate",
+      title: "Order Date",
+      type: "datetime",
+      initialValue: () => new Date().toISOString(),
+    },
+    {
+      name: "totalAmount",
+      title: "Total Amount",
+      type: "number",
+      validation: (Rule: Rule) =>
+        Rule.positive().error("Total amount must be positive"),
+    },
+    {
       name: "products",
       title: "Products",
       type: "array",
@@ -25,7 +53,7 @@ const orderSchema = {
               name: "TrackingId",
               title: "TrackingId",
               type: "string",
-              readOnly: true, // Sanity automatically assigns this
+              readOnly: true,
             },
             {
               name: "name",

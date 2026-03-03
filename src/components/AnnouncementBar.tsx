@@ -6,7 +6,7 @@ function AnnouncementBar() {
     <div className='w-full h-[38px] bg-black text-white flex justify-center items-center max-w-screen-2xl mx-auto'>
       {/* Left side */}
       <div className='flex items-center space-x-2'>
-        <h1 className='text-[8px] md:text-xs '>
+        <h1 className='text-[10px] md:text-xs '>
           Sign up and get 20% off to your first order.
         </h1>
         <SignedOut>

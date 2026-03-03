@@ -6,17 +6,24 @@ import "react-toastify/ReactToastify.css";
 import { add } from '../Redux/features/cart';
 import { Button } from '@/components/ui/button';
 
-
-function Toastify({cartItem}:any) {
-    
-const dispatch = useDispatch()
-
-const handleadd = (cartItem:any)=>{
-    dispatch(add(cartItem))
+interface ToastifyProps {
+  cartItem: {
+    id: string;
+    name: string;
+    image: string;
+    price: number;
+    size: string;
+    color: string;
+    qty: number;
+    discount: number;
+  };
 }
 
+function Toastify({ cartItem }: ToastifyProps) {
+  const dispatch = useDispatch()
 
-    const notify = () => 
+  const handleAddToCart = () => {
+    dispatch(add(cartItem))
     toast.success('Product added Successfully!', {
       position: "bottom-right",
       autoClose: 5000,
@@ -27,28 +34,28 @@ const handleadd = (cartItem:any)=>{
       progress: undefined,
       theme: "light",
       transition: Bounce,
-      });
+    });
+  }
+
   return (
     <>
-    <div  onClick={()=>handleadd(cartItem)}>
-         <Button  onClick={notify} className="bg-black text-white lg:w-[300px]"
-           >Add to Cart</Button>
-    </div>
-     <ToastContainer
-     position="bottom-right"
-     autoClose={5000}
-     hideProgressBar={false}
-     newestOnTop={false}
-     closeOnClick={false}
-     rtl={false}
-     pauseOnFocusLoss
-     draggable
-     pauseOnHover
-     theme="light"
-     transition={Bounce}
-     />
-     </>
-
+      <Button onClick={handleAddToCart} className="bg-black text-white lg:w-[300px]">
+        Add to Cart
+      </Button>
+      <ToastContainer
+        position="bottom-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick={false}
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+        transition={Bounce}
+      />
+    </>
   )
 }
 

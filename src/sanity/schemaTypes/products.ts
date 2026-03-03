@@ -34,7 +34,7 @@ export default defineType({
                    {title: 'T-Shirt', value: 'tshirt'},
                    {title: 'Short', value: 'short'}, 
                    {title: 'Jeans', value: 'jeans'} ,
-                   {title: 'Hoddie', value: 'hoodie'} ,
+                   {title: 'Hoodie', value: 'hoodie'} ,
                    {title: 'Shirt', value: 'shirt'} ,
                 ]
             }

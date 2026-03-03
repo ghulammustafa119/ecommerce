@@ -24,12 +24,10 @@ export async function GET(
     //   trackingNumber: "tracking number", // Replace with the actual tracking number
     // });
 
-    console.log(label);
-
     return NextResponse.json(label, { status: 200 });
   } catch (error) {
-    console.log(error);
-    return new Response(JSON.stringify({ error: error }), {
+    const message = error instanceof Error ? error.message : "An error occurred";
+    return new Response(JSON.stringify({ error: message }), {
       status: 500,
     });
   }

@@ -4,8 +4,23 @@ import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { FaStore, FaDollarSign, FaShoppingBag, FaMoneyBill } from "react-icons/fa";
 
+interface OrderProduct {
+  TrackingId: string;
+  name: string;
+  price: number;
+  qty: number;
+}
+
+interface Order {
+  _id: string;
+  _createdAt: string;
+  status?: string;
+  shippingForm?: { fullName: string; email: string };
+  products?: OrderProduct[];
+}
+
 export default function StatsComponent() {
-  const [orders, setOrders] = useState<any[]>([]);
+  const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -22,7 +37,7 @@ export default function StatsComponent() {
      
         setOrders(data || []); // Ensure it's always an array
       } catch (error) {
-        console.error("Error fetching orders:", error);
+        // Error fetching orders
       } finally {
         setLoading(false);
       }
@@ -41,7 +56,7 @@ export default function StatsComponent() {
   const totalRevenue = orders.reduce((acc, order) => {
     return (
       acc +
-      (order.products?.reduce((sum: any, product: any) => sum + (product.price || 0) * (product.qty || 1), 0) || 0)
+      (order.products?.reduce((sum: number, product: OrderProduct) => sum + (product.price || 0) * (product.qty || 1), 0) || 0)
     );
   }, 0);
 
@@ -50,7 +65,7 @@ export default function StatsComponent() {
 
   // Monthly Product Sale (Total products sold)
   const monthlyProductSale = orders.reduce((acc, order) => {
-    return acc + (order.products?.reduce((sum: any, product: any) => sum + (product.qty || 1), 0) || 0);
+    return acc + (order.products?.reduce((sum: number, product: OrderProduct) => sum + (product.qty || 1), 0) || 0);
   }, 0);
 
   const stats = [

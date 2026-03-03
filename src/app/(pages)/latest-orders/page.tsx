@@ -4,8 +4,25 @@ import { useEffect, useState } from "react";
 import { client } from "@/sanity/lib/client";
 import DashboardNav from "@/components/navbar";
 
+interface OrderProduct {
+  TrackingId: string;
+  name: string;
+  price: number;
+  qty: number;
+  size?: string;
+  color?: string;
+}
+
+interface Order {
+  _id: string;
+  _createdAt: string;
+  status?: string;
+  shippingForm?: { fullName: string; email: string };
+  products?: OrderProduct[];
+}
+
 export default function OrdersDashboard() {
-  const [orders, setOrders] = useState<any[]>([]);
+  const [orders, setOrders] = useState<Order[]>([]);
   const [Loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -23,7 +40,7 @@ export default function OrdersDashboard() {
         setOrders(data || []);
         setLoading(false);
       } catch (error) {
-        console.error("Error fetching orders:", error);
+        setLoading(false);
       }
     }
     fetchData();
@@ -37,7 +54,6 @@ export default function OrdersDashboard() {
       await client.delete(orderId);
       setOrders((prevOrders) => prevOrders.filter((order) => order._id !== orderId));
     } catch (error) {
-      console.error("Error deleting order:", error);
       alert("Failed to delete order. Check permissions.");
     }
   }
@@ -67,8 +83,8 @@ export default function OrdersDashboard() {
           </thead>
           <tbody>
             {orders?.length > 0 ? (
-              orders.map((order: any, orderIndex: number) =>
-                order?.products?.map((product: any, index: number) => (
+              orders.map((order, orderIndex) =>
+                order?.products?.map((product, index) => (
                   <tr key={`${orderIndex}-${index}`} className="text-sm md:text-base">
                     <td className="border px-2 md:px-4 py-2">{order?.shippingForm?.fullName || "N/A"}</td>
                     <td className="border px-2 md:px-4 py-2">{order?.shippingForm?.email || "N/A"}</td>
@@ -80,14 +96,18 @@ export default function OrdersDashboard() {
                     <td className="border px-2 md:px-4 py-2">
                       <span
                         className={`px-2 py-1 rounded-full text-white text-xs md:text-sm ${
-                          order?.status === "Pending"
+                          order?.status === "pending" || !order?.status
                             ? "bg-yellow-500"
-                            : order?.status === "Shipped"
+                            : order?.status === "shipped"
                             ? "bg-blue-500"
-                            : "bg-green-500"
+                            : order?.status === "delivered"
+                            ? "bg-green-500"
+                            : order?.status === "cancelled"
+                            ? "bg-red-500"
+                            : "bg-gray-500"
                         }`}
                       >
-                        {order?.status || "Pending"}
+                        {order?.status || "pending"}
                       </span>
                     </td>
                     <td className="border px-2 md:px-4 py-2">

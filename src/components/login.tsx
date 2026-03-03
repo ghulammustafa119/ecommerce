@@ -9,7 +9,7 @@ export default function Login() {
   const [showPassword, setShowPassword] = useState(false); // Toggle state
   const router = useRouter();
 
-  const handleLogin = async (e: any) => {
+  const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     try {
@@ -30,7 +30,6 @@ export default function Login() {
         setError('Invalid email or password');
       }
     } catch (err) {
-      console.error("Login Error:", err);
       setError('Something went wrong. Please try again.');
     }
   };

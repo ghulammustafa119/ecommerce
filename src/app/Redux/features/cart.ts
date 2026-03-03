@@ -1,61 +1,56 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
+import { CartItem } from '@/type'
 
-// Define the initial state using that type
+type CartState = CartItem[]
+
+const initialState: CartState = []
+
 export const cartSlice = createSlice({
   name: 'products',
-  initialState: [],
+  initialState,
   reducers: {
     // add to cart functionality
-    add(state: any, action) {
-      let uuid = Math.floor(1000 + Math.random() * 9000)
-      let newobj = { ...action.payload, uuid }
+    add(state, action: PayloadAction<Omit<CartItem, 'uuid'>>) {
+      const uuid = Date.now() + Math.floor(Math.random() * 9000)
+      const newobj: CartItem = { ...action.payload, uuid }
       state.push(newobj)
     },
     // delete from cart
-    remove(state: any, { payload }) {
-      return state.filter((val: any) => val.uuid !== payload)
+    remove(state, action: PayloadAction<number>) {
+      return state.filter((val) => val.uuid !== action.payload)
     },
-    // addition of item
-    addition(state: any, action) {
-      let obj = state.find(
-        (val: any) =>
-          val.id == action.payload.id &&
-          val.color == action.payload.color &&
-          val.size == action.payload.size
+    // increase quantity of item
+    addition(state, action: PayloadAction<{ id: string; color: string; size: string }>) {
+      const obj = state.find(
+        (val) =>
+          val.id === action.payload.id &&
+          val.color === action.payload.color &&
+          val.size === action.payload.size
       )
       if (obj) {
-        ++obj.qty
-        let newState = state.filter((val: any) => val.id !== obj.id)
-        state = [...newState, obj]
-        return
+        obj.qty += 1
       }
     },
-    // subtraction of item
-    subraction(state: any, action) {
-      let obj = state.find(
-        (val: any) =>
-          val.id == action.payload.id &&
-          val.color == action.payload.color &&
-          val.size == action.payload.size
+    // decrease quantity of item
+    subtraction(state, action: PayloadAction<{ id: string; color: string; size: string }>) {
+      const obj = state.find(
+        (val) =>
+          val.id === action.payload.id &&
+          val.color === action.payload.color &&
+          val.size === action.payload.size
       )
-      if (obj !== undefined) {
-        --obj.qty
-        let newState = state.filter((val: any) => val.uuid !== obj.uuid)
-        state = [...newState, obj]
-        return
+      if (obj && obj.qty > 1) {
+        obj.qty -= 1
       }
     },
-    // Action to clear the cart and remove order from localStorage
-    removeOrderFromLocalStorage(state: any) {
-      // Empty the cart in the Redux state
-      state.length = 0;
-      // Remove the cart details from localStorage
-      localStorage.removeItem('cart');
+    // Action to clear the cart
+    clearCart() {
+      return []
     },
   },
 })
 
-export const { add, remove, subraction, addition, removeOrderFromLocalStorage } =
+export const { add, remove, subtraction, addition, clearCart } =
   cartSlice.actions
 
 export default cartSlice.reducer
